@@ -56,6 +56,7 @@ flutter:
     - images/title_img.png
     - images/logo_img.png
     - images/switch.png
+    - images/cover_img.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

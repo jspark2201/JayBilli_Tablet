@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jaybilli_tablet/playingGameActivity.dart';
 
 class SelectTwoPeopleActivity extends StatefulWidget {
   @override
@@ -50,7 +51,8 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
                       Stack(children: [
                         Visibility(
                             visible: !_firstVisible,
-                            child: completeSettingBox(firstPlayerColor, 1, firstPlayerNum)),
+                            child: completeSettingBox(
+                                firstPlayerColor, 1, firstPlayerNum)),
                         Visibility(
                             visible: _firstVisible,
                             child: incompleteSettingBox(firstPlayerColor, 1)),
@@ -59,10 +61,12 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
                         children: [
                           Visibility(
                               visible: !_secondVisible,
-                              child: completeSettingBox(secondPlayerColor, 2, secondPlayerNum)),
+                              child: completeSettingBox(
+                                  secondPlayerColor, 2, secondPlayerNum)),
                           Visibility(
                               visible: _secondVisible,
-                              child: incompleteSettingBox(secondPlayerColor, 2)),
+                              child:
+                                  incompleteSettingBox(secondPlayerColor, 2)),
                         ],
                       ),
                     ],
@@ -75,7 +79,11 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
                     child: RaisedButton(
                       color: Color(0xffFF6161),
                       onPressed: () {
-                        startGame();
+                        if (firstPlayerNum != '0' && secondPlayerNum != '0') {
+                          startGame();
+                        } else {
+                          pleasSettingNum();
+                        }
                       },
                       child: Text(
                         '시작하기',
@@ -156,9 +164,16 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('비회원$player', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-                Text(number, style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),),
-                SizedBox(height: 100,),
+                Text('비회원$player',
+                    style:
+                        TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                Text(
+                  number,
+                  style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 100,
+                ),
               ],
             ),
           ),
@@ -410,7 +425,9 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
   }
 
   void startGame() {
-    print('게임 시작');
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (context) => PlayingGameActivity(firstSetNum: firstPlayerNum, secondSetNum: secondPlayerNum,
+        firstSetColor: firstPlayerColor.toInt(),secondSetColor: secondPlayerColor.toInt())));
   }
 
   //공 색을 변경하는 함수
@@ -420,6 +437,8 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
       temp = firstPlayerColor;
       firstPlayerColor = secondPlayerColor;
       secondPlayerColor = temp;
+
+
     });
   }
 
@@ -459,152 +478,161 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
               backgroundColor: Color(playerColor),
               content: StatefulBuilder(
                   builder: (BuildContext context, StateSetter setState) {
-                    return SizedBox(
-                      width: 1100,
-                      height: 700,
-                      child: Stack(
-                        overflow: Overflow.visible,
+                return SizedBox(
+                  width: 1100,
+                  height: 700,
+                  child: Stack(
+                    overflow: Overflow.visible,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      setState(() => settingNum = '0');
-                                      Navigator.of(context).pop();
-                                    },
-                                    icon: CircleAvatar(
-                                      child: Icon(
-                                        Icons.close,
-                                        color: Colors.white,
-                                      ),
-                                      radius: 50,
-                                      backgroundColor: Colors.red,
-                                    ),
+                              IconButton(
+                                onPressed: () {
+                                  setState(() => settingNum = '0');
+                                  Navigator.of(context).pop();
+                                },
+                                icon: CircleAvatar(
+                                  child: Icon(
+                                    Icons.close,
+                                    color: Colors.white,
                                   ),
-                                  Text(
-                                    '점수 입력',
-                                    style: TextStyle(
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  SizedBox()
-                                ],
+                                  radius: 50,
+                                  backgroundColor: Colors.red,
+                                ),
                               ),
-                              Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Container(
-                                    height: 600,
-                                    width: 500,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[200],
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(20)),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey[500],
-                                          offset: Offset(
-                                            2.0,
-                                            2.0,
-                                          ),
-                                          blurRadius: 2.0,
-                                        )
-                                      ],
-                                    ),
-                                    child: Center(
-                                        child: Text(
-                                          settingNum,
-                                          style: TextStyle(
-                                              fontSize: 70,
-                                              fontWeight: FontWeight.bold),
-                                        )),
-                                  ),
-                                  Container(
-                                      height: 600,
-                                      width: 500,
-                                      //color: Colors.green,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                            children: [
-                                              calculatorBtn('7', setState),
-                                              calculatorBtn('8', setState),
-                                              calculatorBtn('9', setState),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                            children: [
-                                              calculatorBtn('4', setState),
-                                              calculatorBtn('5', setState),
-                                              calculatorBtn('6', setState),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                            children: [
-                                              calculatorBtn('1', setState),
-                                              calculatorBtn('2', setState),
-                                              calculatorBtn('3', setState),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                            children: [
-                                              deleteNumBtn('취소', setState),
-                                              calculatorBtn('0', setState),
-                                              ButtonTheme(
-                                                height: 120,
-                                                minWidth: 120,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                        20)),
-                                                child: RaisedButton(
-                                                  color: Color(0xff366796),
-                                                  onPressed: () {
-                                                    setNumber(
-                                                        player, settingNum);
-                                                    setState(() =>
-                                                    settingNum = '0');
-                                                    Navigator.of(context)
-                                                        .pop();
-                                                  },
-                                                  child: Text(
-                                                    '확인',
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 20),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      )),
-                                ],
+                              Text(
+                                '점수 입력',
+                                style: TextStyle(
+                                    fontSize: 30, fontWeight: FontWeight.bold),
                               ),
                               SizedBox()
                             ],
                           ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Container(
+                                height: 600,
+                                width: 500,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey[500],
+                                      offset: Offset(
+                                        2.0,
+                                        2.0,
+                                      ),
+                                      blurRadius: 2.0,
+                                    )
+                                  ],
+                                ),
+                                child: Center(
+                                    child: Text(
+                                  settingNum,
+                                  style: TextStyle(
+                                      fontSize: 70,
+                                      fontWeight: FontWeight.bold),
+                                )),
+                              ),
+                              Container(
+                                  height: 600,
+                                  width: 500,
+                                  //color: Colors.green,
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          calculatorBtn('7', setState),
+                                          calculatorBtn('8', setState),
+                                          calculatorBtn('9', setState),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          calculatorBtn('4', setState),
+                                          calculatorBtn('5', setState),
+                                          calculatorBtn('6', setState),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          calculatorBtn('1', setState),
+                                          calculatorBtn('2', setState),
+                                          calculatorBtn('3', setState),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          deleteNumBtn('취소', setState),
+                                          calculatorBtn('0', setState),
+                                          ButtonTheme(
+                                            height: 120,
+                                            minWidth: 120,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20)),
+                                            child: RaisedButton(
+                                              color: Color(0xff366796),
+                                              onPressed: () {
+                                                setNumber(player, settingNum);
+                                                setState(
+                                                    () => settingNum = '0');
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text(
+                                                '확인',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 20),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  )),
+                            ],
+                          ),
+                          SizedBox()
                         ],
                       ),
-                    );
-                  }));
+                    ],
+                  ),
+                );
+              }));
         });
+  }
 
+  void pleasSettingNum() {
+    showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0)),
+            content: SizedBox(
+                height: 200,
+                width: 400,
+                child: Center(child: Text('점수를 입력해주세요', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),))),
+          );
+        });
   }
 }
