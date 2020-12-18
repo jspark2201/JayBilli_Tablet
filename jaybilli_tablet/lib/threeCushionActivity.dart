@@ -41,7 +41,7 @@ class ThreeCushionActivity extends StatelessWidget {
                                 builder: (context) => SelectOnePersonActivity()));
                       },
                       child: Text(
-                        '1명',
+                        '1인',
                         style: TextStyle(color: Colors.white, fontSize: 30),
                       ),
                     ),
@@ -63,7 +63,7 @@ class ThreeCushionActivity extends StatelessWidget {
                                 builder: (context) => SelectTwoPeopleActivity()));
                       },
                       child: Text(
-                        '2명',
+                        '2인',
                         style: TextStyle(color: Colors.white, fontSize: 30),
                       ),
                     ),
@@ -90,7 +90,7 @@ class ThreeCushionActivity extends StatelessWidget {
                                 builder: (context) => SelectThreePeopleActivity()));
                       },
                       child: Text(
-                        '3명',
+                        '3인',
                         style: TextStyle(color: Colors.white, fontSize: 30),
                       ),
                     ),
@@ -112,7 +112,7 @@ class ThreeCushionActivity extends StatelessWidget {
                                 builder: (context) => SelectFourPeopleActivity()));
                       },
                       child: Text(
-                        '4명',
+                        '4인',
                         style: TextStyle(color: Colors.white, fontSize: 30),
                       ),
                     ),

@@ -9,8 +9,11 @@ class SelectTwoPeopleActivity extends StatefulWidget {
 class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
   var firstPlayerColor = 0xffffffff;
   var secondPlayerColor = 0xffffeb3b;
-  var testNum = '0';
+  var firstPlayerNum = '0';
+  var secondPlayerNum = '0';
   var settingNum = '0';
+  var _firstVisible = true;
+  var _secondVisible = true;
 
   @override
   Widget build(BuildContext context) {
@@ -42,58 +45,25 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Container(
-                        height: 600,
-                        width: 500,
-                        decoration: BoxDecoration(
-                          color: Color(firstPlayerColor),
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey[850],
-                                offset: Offset(
-                                  4.0,
-                                  4.0,
-                                ),
-                                //blurRadius: 15.0,
-                                spreadRadius: 1.0)
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            memberBtn(1),
-                            nonMemberBtn(context, 1, firstPlayerColor),
-                          ],
-                        ),
-                      ),
-                      Text('$testNum'),
-                      Container(
-                        height: 600,
-                        width: 500,
-                        decoration: BoxDecoration(
-                          color: Color(secondPlayerColor),
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey[850],
-                                offset: Offset(
-                                  4.0,
-                                  4.0,
-                                ),
-                                //blurRadius: 15.0,
-                                spreadRadius: 1.0)
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            memberBtn(2),
-                            nonMemberBtn(context, 2, secondPlayerColor),
-                          ],
-                        ),
+                      Stack(children: [
+                        Visibility(
+                            visible: !_firstVisible,
+                            child: completeSettingBox(firstPlayerColor, 1, firstPlayerNum)),
+                        Visibility(
+                            visible: _firstVisible,
+                            child: incompleteSettingBox(firstPlayerColor, 1)),
+                      ]),
+                      Stack(
+                        children: [
+                          Visibility(
+                              visible: !_secondVisible,
+                              child: completeSettingBox(secondPlayerColor, 2, secondPlayerNum)),
+                          Visibility(
+                              visible: _secondVisible,
+                              child: incompleteSettingBox(secondPlayerColor, 2)),
+                        ],
                       ),
                     ],
                   ),
@@ -113,14 +83,87 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
                       ),
                     ),
                   ),
-                  Container(
-                    color: Colors.green,
-                  )
+                  SizedBox()
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget incompleteSettingBox(var color, var player) {
+    return Container(
+      height: 600,
+      width: 500,
+      decoration: BoxDecoration(
+        color: Color(color),
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.grey[850],
+              offset: Offset(
+                4.0,
+                4.0,
+              ),
+              spreadRadius: 1.0)
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          memberBtn(player),
+          nonMemberBtn(context, player, color),
+        ],
+      ),
+    );
+  }
+
+  Widget completeSettingBox(var color, var player, var number) {
+    return Container(
+      height: 600,
+      width: 500,
+      decoration: BoxDecoration(
+        color: Color(color),
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.grey[850],
+              offset: Offset(
+                4.0,
+                4.0,
+              ),
+              spreadRadius: 1.0)
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                  icon: Icon(Icons.settings),
+                  iconSize: 40,
+                  onPressed: () {
+                    print('설정 버튼 눌림');
+                    reSettingBtn(context, player, color);
+                  })
+            ],
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('비회원$player', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                Text(number, style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),),
+                SizedBox(height: 100,),
+              ],
+            ),
+          ),
+          SizedBox()
+        ],
       ),
     );
   }
@@ -133,7 +176,7 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
       child: RaisedButton(
         onPressed: () {
           showDialog(
-            barrierDismissible: false,
+              barrierDismissible: false,
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
@@ -149,27 +192,33 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
                             Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        IconButton(
-                                          onPressed: () {
-                                            setState(() => settingNum='0');
-                                            Navigator.of(context).pop();
-                                          },
-                                          icon: CircleAvatar(
-                                            child: Icon(Icons.close, color: Colors.white,),
-                                            radius: 50,
-                                            backgroundColor: Colors.red,
-                                          ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        setState(() => settingNum = '0');
+                                        Navigator.of(context).pop();
+                                      },
+                                      icon: CircleAvatar(
+                                        child: Icon(
+                                          Icons.close,
+                                          color: Colors.white,
                                         ),
-                                        Text('점수 입력', style: TextStyle(
+                                        radius: 50,
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    ),
+                                    Text(
+                                      '점수 입력',
+                                      style: TextStyle(
                                           fontSize: 30,
                                           fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox()
-                                      ],
                                     ),
+                                    SizedBox()
+                                  ],
+                                ),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
@@ -189,11 +238,16 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
                                               2.0,
                                             ),
                                             blurRadius: 2.0,
-                                            //spreadRadius: 1.0
                                           )
                                         ],
                                       ),
-                                      child: Center(child: Text(settingNum, style: TextStyle(fontSize: 70, fontWeight: FontWeight.bold),)),
+                                      child: Center(
+                                          child: Text(
+                                        settingNum,
+                                        style: TextStyle(
+                                            fontSize: 70,
+                                            fontWeight: FontWeight.bold),
+                                      )),
                                     ),
                                     Container(
                                         height: 600,
@@ -239,16 +293,25 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
                                                 ButtonTheme(
                                                   height: 120,
                                                   minWidth: 120,
-                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20)),
                                                   child: RaisedButton(
-                                                    color: Colors.grey[200],
+                                                    color: Color(0xff366796),
                                                     onPressed: () {
-                                                      setNumber(settingNum);
-                                                      setState(()=> settingNum='0');
-                                                      Navigator.of(context).pop(testNum);
+                                                      setNumber(
+                                                          player, settingNum);
+                                                      setState(() =>
+                                                          settingNum = '0');
+                                                      Navigator.of(context)
+                                                          .pop();
                                                     },
-                                                    child: Text('확인',
-                                                      style: TextStyle(color: Colors.black, fontSize: 20),
+                                                    child: Text(
+                                                      '확인',
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 20),
                                                     ),
                                                   ),
                                                 ),
@@ -262,7 +325,6 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
                               ],
                             ),
                           ],
-
                         ),
                       );
                     }));
@@ -319,7 +381,7 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
       child: RaisedButton(
         color: Colors.grey[200],
         onPressed: () {
-          setState(() => settingNum='0');
+          setState(() => settingNum = '0');
         },
         child: Text(
           key,
@@ -365,7 +427,7 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
   void pressNumberBtn(var key, StateSetter setState) {
     setState(() {
       // '0' 초기값으로 설정되어 있다면 누른 숫자로 변경 ex) 0 -> 6
-      if (settingNum=='0') {
+      if (settingNum == '0') {
         settingNum = key;
       } else {
         //이미 숫자가 설정되어 있다면 누른 숫자를 이미 설정된 숫자 뒤에 붙인 후 변경 ex) 1 -> 17
@@ -375,9 +437,174 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
   }
 
   //점수 설정 뒤 확인버튼을 누르면 설정한 점수를 반영하는 함수
-  void setNumber(var num) {
+  void setNumber(var player, var num) {
     setState(() {
-      testNum = num;
+      if (player == 1) {
+        firstPlayerNum = num;
+        _firstVisible = false;
+      } else if (player == 2) {
+        secondPlayerNum = num;
+        _secondVisible = false;
+      }
     });
+  }
+
+  //점수를 수정하고 싶을 때 setting 버튼을 누르면 호출되는 함수
+  void reSettingBtn(BuildContext context, var player, var playerColor) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              backgroundColor: Color(playerColor),
+              content: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                    return SizedBox(
+                      width: 1100,
+                      height: 700,
+                      child: Stack(
+                        overflow: Overflow.visible,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() => settingNum = '0');
+                                      Navigator.of(context).pop();
+                                    },
+                                    icon: CircleAvatar(
+                                      child: Icon(
+                                        Icons.close,
+                                        color: Colors.white,
+                                      ),
+                                      radius: 50,
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  ),
+                                  Text(
+                                    '점수 입력',
+                                    style: TextStyle(
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox()
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Container(
+                                    height: 600,
+                                    width: 500,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20)),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey[500],
+                                          offset: Offset(
+                                            2.0,
+                                            2.0,
+                                          ),
+                                          blurRadius: 2.0,
+                                        )
+                                      ],
+                                    ),
+                                    child: Center(
+                                        child: Text(
+                                          settingNum,
+                                          style: TextStyle(
+                                              fontSize: 70,
+                                              fontWeight: FontWeight.bold),
+                                        )),
+                                  ),
+                                  Container(
+                                      height: 600,
+                                      width: 500,
+                                      //color: Colors.green,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                            children: [
+                                              calculatorBtn('7', setState),
+                                              calculatorBtn('8', setState),
+                                              calculatorBtn('9', setState),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                            children: [
+                                              calculatorBtn('4', setState),
+                                              calculatorBtn('5', setState),
+                                              calculatorBtn('6', setState),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                            children: [
+                                              calculatorBtn('1', setState),
+                                              calculatorBtn('2', setState),
+                                              calculatorBtn('3', setState),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                            children: [
+                                              deleteNumBtn('취소', setState),
+                                              calculatorBtn('0', setState),
+                                              ButtonTheme(
+                                                height: 120,
+                                                minWidth: 120,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                    BorderRadius.circular(
+                                                        20)),
+                                                child: RaisedButton(
+                                                  color: Color(0xff366796),
+                                                  onPressed: () {
+                                                    setNumber(
+                                                        player, settingNum);
+                                                    setState(() =>
+                                                    settingNum = '0');
+                                                    Navigator.of(context)
+                                                        .pop();
+                                                  },
+                                                  child: Text(
+                                                    '확인',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 20),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      )),
+                                ],
+                              ),
+                              SizedBox()
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  }));
+        });
+
   }
 }
