@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 class PlayingGameActivity extends StatefulWidget {
@@ -28,6 +27,11 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
   int sPAcquireScore = 0;
   int customWhite = 4294967295;
   int customYellow = 4294961979;
+  bool firstPlayerTurn = true;
+  int inning = 1;
+  int inningCycle = 0;
+  String fPAverage = 0.toStringAsFixed(3);
+  String sPAverage = 0.toStringAsFixed(3);
 
   @override
   void initState() {
@@ -35,6 +39,15 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
     super.initState();
 
     _startTimeOutTimer();
+    _setFirstTurn();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+
+    _timeOutTimer.cancel();
   }
 
   @override
@@ -51,7 +64,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
               children: [
                 Expanded(
                   flex: 1,
-                  child: playerForm(1),
+                  child: firstPlayerForm(),
                 ),
                 Expanded(
                   flex: 1,
@@ -59,7 +72,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        "1",
+                        "$inning",
                         style: TextStyle(fontSize: 60, color: Colors.white),
                       ),
                       Text(
@@ -106,6 +119,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                           color: Color(0xff366796),
                           onPressed: () {
                             _startTimeOutTimer();
+                            changeTurn();
                           },
                           child: Text(
                             '턴 넘기기',
@@ -119,7 +133,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                 ),
                 Expanded(
                   flex: 1,
-                  child: playerForm(2),
+                  child: secondPlayerForm(),
                 )
               ],
             ),
@@ -145,7 +159,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
     );
   }
 
-  Widget playerForm(var player) {
+  Widget firstPlayerForm() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -160,22 +174,10 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: RaisedButton(
-                color: player == 1
-                    ? Color(widget.firstSetColor)
-                    : Color(widget.secondSetColor),
+                color: Color(widget.firstSetColor),
                 onPressed: () {
-                  print('$player번째 선수 점수 획득');
-                  if (player == 1) {
-                    setState(() {
-                      fPAcquireScore++;
-                    });
-                    _startTimeOutTimer();
-                  } else {
-                    setState(() {
-                      sPAcquireScore++;
-                    });
-                    _startTimeOutTimer();
-                  }
+                  fPTapped();
+                  _startTimeOutTimer();
                 },
                 child: SizedBox(
                   height: 630,
@@ -183,12 +185,11 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        '비회원$player',
+                        '비회원1',
                         style: TextStyle(fontSize: 30),
                       ),
                       SizedBox(),
-                      Text(
-                        player == 1 ? '$fPAcquireScore' : '$sPAcquireScore',
+                      Text('$fPAcquireScore',
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 80,
@@ -196,7 +197,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                       ),
                       SizedBox(),
                       Text(
-                        '0.000',
+                        fPAverage,
                         style: TextStyle(fontSize: 20),
                       ),
                     ],
@@ -205,7 +206,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
               ),
             ),
             Visibility(
-                visible: true,
+                visible: firstPlayerTurn,
                 child: Positioned(
                   top: -50.0,
                   left: 165.0,
@@ -232,14 +233,11 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                             blurRadius: 3.0)
                       ]),
                   child: CircleAvatar(
-                    child: Text(
-                      player == 1 ? widget.firstSetNum : widget.secondSetNum,
+                    child: Text(widget.firstSetNum,
                       style: TextStyle(fontSize: 30, color: Colors.black),
                     ),
                     radius: 30,
-                    backgroundColor: player == 1
-                        ? Color(widget.firstSetColor)
-                        : Color(widget.secondSetColor),
+                    backgroundColor: Color(widget.firstSetColor),
                   ),
                 )),
           ],
@@ -247,10 +245,106 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            scoreBtn(player, -1),
-            scoreBtn(player, 1),
-            scoreBtn(player, 2),
-            scoreBtn(player, 3)
+            scoreBtn(1, -1),
+            scoreBtn(1, 1),
+            scoreBtn(1, 2),
+            scoreBtn(1, 3)
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget secondPlayerForm() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        SizedBox(),
+        Stack(
+          overflow: Overflow.visible,
+          children: [
+            ButtonTheme(
+              height: 630,
+              minWidth: 430,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: RaisedButton(
+                color: Color(widget.secondSetColor),
+                onPressed: () {
+                  sPTapped();
+                  _startTimeOutTimer();
+                },
+                child: SizedBox(
+                  height: 630,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        '비회원2',
+                        style: TextStyle(fontSize: 30),
+                      ),
+                      SizedBox(),
+                      Text('$sPAcquireScore',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 80,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(),
+                      Text(
+                        sPAverage,
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Visibility(
+                visible: !firstPlayerTurn,
+                child: Positioned(
+                  top: -50.0,
+                  left: 165.0,
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    child: CircleAvatar(
+                      backgroundColor: Colors.red,
+                    ),
+                  ),
+                )),
+            Positioned(
+                top: -30.0,
+                left: 185.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.grey[800],
+                            offset: Offset(2.0, 2.0),
+                            spreadRadius: 1.0,
+                            blurRadius: 3.0)
+                      ]),
+                  child: CircleAvatar(
+                    child: Text(widget.secondSetNum,
+                      style: TextStyle(fontSize: 30, color: Colors.black),
+                    ),
+                    radius: 30,
+                    backgroundColor: Color(widget.secondSetColor),
+                  ),
+                )),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            scoreBtn(2, -1),
+            scoreBtn(2, 1),
+            scoreBtn(2, 2),
+            scoreBtn(2, 3)
           ],
         ),
       ],
@@ -269,14 +363,24 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
         onPressed: () {
           if (player == 1) {
             setState(() {
-              fPAcquireScore += num;
+              if(firstPlayerTurn) {
+                fPAcquireScore += num;
+                fPAvgCalculation();
+              } else {
+                changeTurn();
+              }
             });
             if (fPAcquireScore < 0) {
               fPAcquireScore = 0;
             }
           } else {
             setState(() {
-              sPAcquireScore += num;
+              if(!firstPlayerTurn) {
+                sPAcquireScore += num;
+                sPAvgCalculation();
+              } else {
+                changeTurn();
+              }
             });
             if (sPAcquireScore < 0) {
               sPAcquireScore = 0;
@@ -315,6 +419,61 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
         }
       });
     });
+  }
+
+  void fPTapped() {
+    setState(() {
+      if(firstPlayerTurn) {
+        fPAcquireScore++;
+        fPAvgCalculation();
+      } else {
+        changeTurn();
+      }
+    });
+  }
+
+  void sPTapped() {
+    setState(() {
+      if(!firstPlayerTurn) {
+        sPAcquireScore++;
+        sPAvgCalculation();
+      } else {
+        changeTurn();
+      }
+    });
+  }
+
+  void fPAvgCalculation() {
+    setState(() {
+      fPAverage = (fPAcquireScore / inning).toStringAsFixed(3);
+    });
+  }
+
+  void sPAvgCalculation() {
+    setState(() {
+      sPAverage = (sPAcquireScore / inning).toStringAsFixed(3);
+    });
+  }
+
+  void changeTurn() {
+    setState(() {
+      firstPlayerTurn = !firstPlayerTurn;
+
+      if (inningCycle != 0 && inningCycle % 2 == 1) {
+        inning++;
+      }
+      inningCycle++;
+    });
+    fPAvgCalculation();
+    sPAvgCalculation();
+  }
+
+  void _setFirstTurn() {
+    if(widget.firstSetColor == customWhite) {
+      firstPlayerTurn = true;
+    } else {
+      firstPlayerTurn = false;
+    }
   }
 
   void finishGame() {
