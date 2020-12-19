@@ -9,11 +9,10 @@ class PlayingGameActivity extends StatefulWidget {
 
   //widget.firstSetNum 또는 widget.secondSetNum  형식을 통해 아래 클래스에서 사용 가능
 
-  PlayingGameActivity(
-      {@required this.firstSetNum,
-      @required this.secondSetNum,
-      @required this.firstSetColor,
-      @required this.secondSetColor});
+  PlayingGameActivity({@required this.firstSetNum,
+    @required this.secondSetNum,
+    @required this.firstSetColor,
+    @required this.secondSetColor});
 
   @override
   _PlayingGameActivityState createState() => _PlayingGameActivityState();
@@ -32,6 +31,9 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
   int inningCycle = 0;
   String fPAverage = 0.toStringAsFixed(3);
   String sPAverage = 0.toStringAsFixed(3);
+  String _hourGameTime = '00';
+  String _minuteGameTime = '00';
+  Timer _gameTimer;
 
   @override
   void initState() {
@@ -40,6 +42,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
 
     _startTimeOutTimer();
     _setFirstTurn();
+    _startGameTimer();
   }
 
   @override
@@ -48,6 +51,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
     super.dispose();
 
     _timeOutTimer.cancel();
+    _gameTimer.cancel();
   }
 
   @override
@@ -56,106 +60,104 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
       backgroundColor: Color(0xff424543),
       body: SafeArea(
           child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: firstPlayerForm(),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text(
-                        "$inning",
-                        style: TextStyle(fontSize: 60, color: Colors.white),
-                      ),
-                      Text(
-                        "00:00",
-                        style: TextStyle(fontSize: 60, color: Colors.red),
-                      ),
-                      Container(
-                        width: 400,
-                        height: 300,
-                        decoration: BoxDecoration(
-                            color: Color(0xff424543),
-                            image: DecorationImage(
-                              image: ExactAssetImage('images/cover_img.png'),
-                            ),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(40),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Color(0xff2C2E2C),
-                                  offset: Offset(4.0, 4.0),
-                                  blurRadius: 15.0,
-                                  spreadRadius: 1.0),
-                              BoxShadow(
-                                  color: Colors.grey[800],
-                                  offset: Offset(-4.0, -4.0),
-                                  blurRadius: 15.0,
-                                  spreadRadius: 1.0)
-                            ]),
-                      ),
-                      timeOutTimer(),
-                      Container(
-                        width: 400,
-                        height: 100,
-                        color: Colors.pink,
-                      ),
-                      SizedBox(),
-                      ButtonTheme(
-                        height: 100,
-                        minWidth: 350,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        child: RaisedButton(
-                          color: Color(0xff366796),
-                          onPressed: () {
-                            _startTimeOutTimer();
-                            changeTurn();
-                          },
-                          child: Text(
-                            '턴 넘기기',
-                            style: TextStyle(color: Colors.white, fontSize: 30),
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: firstPlayerForm(),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            '$inning',
+                            style: TextStyle(fontSize: 60, color: Colors.white),
                           ),
-                        ),
+                          Text(
+                            _hourGameTime+':'+_minuteGameTime,
+                            style: TextStyle(fontSize: 30, color: Colors.red),
+                          ),
+                          Container(
+                            width: 400,
+                            height: 300,
+                            decoration: BoxDecoration(
+                                color: Color(0xff424543),
+                                image: DecorationImage(
+                                  image: ExactAssetImage(
+                                      'images/cover_img.png'),
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(40),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Color(0xff2C2E2C),
+                                      offset: Offset(4.0, 4.0),
+                                      blurRadius: 15.0,
+                                      spreadRadius: 1.0),
+                                  BoxShadow(
+                                      color: Colors.grey[800],
+                                      offset: Offset(-4.0, -4.0),
+                                      blurRadius: 15.0,
+                                      spreadRadius: 1.0)
+                                ]),
+                          ),
+                          timeOutTimer(),
+                          timerBar(_timeOutTime),
+                          SizedBox(),
+                          ButtonTheme(
+                            height: 100,
+                            minWidth: 350,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                            child: RaisedButton(
+                              color: Color(0xff366796),
+                              onPressed: () {
+                                _startTimeOutTimer();
+                                changeTurn();
+                              },
+                              child: Text(
+                                '턴 넘기기',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 30),
+                              ),
+                            ),
+                          ),
+                          SizedBox(),
+                        ],
                       ),
-                      SizedBox(),
-                    ],
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: secondPlayerForm(),
+                    )
+                  ],
+                ),
+              ),
+              ButtonTheme(
+                height: 70,
+                minWidth: 1200,
+                shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                child: RaisedButton(
+                  color: Color(0xffFF6161),
+                  onPressed: () {
+                    finishGame();
+                  },
+                  child: Text(
+                    '종료하기',
+                    style: TextStyle(color: Colors.white, fontSize: 30),
                   ),
                 ),
-                Expanded(
-                  flex: 1,
-                  child: secondPlayerForm(),
-                )
-              ],
-            ),
-          ),
-          ButtonTheme(
-            height: 70,
-            minWidth: 1200,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            child: RaisedButton(
-              color: Color(0xffFF6161),
-              onPressed: () {
-                finishGame();
-              },
-              child: Text(
-                '종료하기',
-                style: TextStyle(color: Colors.white, fontSize: 30),
               ),
-            ),
-          ),
-        ],
-      )),
+            ],
+          )),
     );
   }
 
@@ -363,7 +365,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
         onPressed: () {
           if (player == 1) {
             setState(() {
-              if(firstPlayerTurn) {
+              if (firstPlayerTurn) {
                 fPAcquireScore += num;
                 fPAvgCalculation();
               } else {
@@ -375,7 +377,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
             }
           } else {
             setState(() {
-              if(!firstPlayerTurn) {
+              if (!firstPlayerTurn) {
                 sPAcquireScore += num;
                 sPAvgCalculation();
               } else {
@@ -403,6 +405,100 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
     );
   }
 
+  Widget timerBar(int time) {
+    return Container(
+      width: 406,
+      height: 100,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.white, width: 3.0),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Visibility(
+            visible: time > 36,
+            child: Container(
+              width: 40,
+              height: 100,
+              color: Color(0xff64AC3F),
+            ),
+          ),
+          Visibility(
+            visible: time > 32,
+            child: Container(
+              width: 40,
+              height: 100,
+              color: Color(0xffC3E63F),
+            ),
+          ),
+          Visibility(
+            visible: time > 28,
+            child: Container(
+              width: 40,
+              height: 100,
+              color: Color(0xffE1E63F),
+            ),
+          ),
+          Visibility(
+            visible: time > 24,
+            child: Container(
+              width: 40,
+              height: 100,
+              color: Color(0xffE6E33F),
+            ),
+          ),
+          Visibility(
+            visible: time > 20,
+            child: Container(
+              width: 40,
+              height: 100,
+              color: Color(0xffE6DD3F),
+            ),
+          ),
+          Visibility(
+            visible: time > 16,
+            child: Container(
+              width: 40,
+              height: 100,
+              color: Color(0xffF9D907),
+            ),
+          ),
+          Visibility(
+            visible: time > 12,
+            child: Container(
+              width: 40,
+              height: 100,
+              color: Color(0xffF49900),
+            ),
+          ),
+          Visibility(
+            visible: time > 8,
+            child: Container(
+              width: 40,
+              height: 100,
+              color: Color(0xffF87405),
+            ),
+          ),
+          Visibility(
+            visible: time > 4,
+            child: Container(
+              width: 40,
+              height: 100,
+              color: Color(0xffF25410),
+            ),
+          ),
+          Visibility(
+            visible: time > 0,
+            child: Container(
+              width: 40,
+              height: 100,
+              color: Color(0xffE63F3F),
+            ),
+          ),
+        ],
+      ),);
+  }
+
   void _startTimeOutTimer() {
     _timeOutTime = 40;
 
@@ -421,9 +517,36 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
     });
   }
 
+  void _startGameTimer() {
+    int _hour = 0;
+    int _minute= 0;
+
+    _gameTimer = Timer.periodic(Duration(seconds: 60), (timer) {
+      setState(() {
+        if (_minute < 59) {
+          _minute++;
+          if(_minute < 10) {
+            _minuteGameTime = '0' + _minute.toString();
+          } else {
+            _minuteGameTime = _minute.toString();
+          }
+        } else {
+          _minute = 0;
+          _minuteGameTime = '00';
+          _hour++;
+          if(_hour < 10) {
+            _hourGameTime = '0' + _hour.toString();
+          } else {
+            _hourGameTime = _hour.toString();
+          }
+        }
+      });
+    });
+  }
+
   void fPTapped() {
     setState(() {
-      if(firstPlayerTurn) {
+      if (firstPlayerTurn) {
         fPAcquireScore++;
         fPAvgCalculation();
       } else {
@@ -434,7 +557,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
 
   void sPTapped() {
     setState(() {
-      if(!firstPlayerTurn) {
+      if (!firstPlayerTurn) {
         sPAcquireScore++;
         sPAvgCalculation();
       } else {
@@ -469,7 +592,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
   }
 
   void _setFirstTurn() {
-    if(widget.firstSetColor == customWhite) {
+    if (widget.firstSetColor == customWhite) {
       firstPlayerTurn = true;
     } else {
       firstPlayerTurn = false;
