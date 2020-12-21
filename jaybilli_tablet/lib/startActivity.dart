@@ -11,7 +11,7 @@ class StartActivity extends StatelessWidget {
               child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              SizedBox(child: Image.asset('images/title_img.png')),
+              SizedBox(child: Image.asset('images/title_img2.png')),
               SizedBox(
                   height: 200,
                   width: 200,

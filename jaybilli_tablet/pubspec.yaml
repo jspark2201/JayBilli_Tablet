@@ -56,6 +56,7 @@ flutter:
   assets:
     - assets/
     - images/title_img.png
+    - images/title_img2.png
     - images/logo_img.png
     - images/switch.png
     - images/cover_img.png
