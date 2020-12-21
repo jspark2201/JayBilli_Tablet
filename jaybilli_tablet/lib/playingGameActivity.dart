@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:audioplayers/audio_cache.dart';
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class PlayingGameActivity extends StatefulWidget {
   final String firstSetNum;
@@ -35,6 +37,8 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
   String _hourGameTime = '00';
   String _minuteGameTime = '00';
   Timer _gameTimer;
+  AudioCache _audioCache;
+  AudioPlayer _audioPlayer;
 
   @override
   void initState() {
@@ -53,6 +57,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
 
     _timeOutTimer.cancel();
     _gameTimer.cancel();
+
   }
 
   @override
@@ -90,7 +95,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                         decoration: BoxDecoration(
                             color: Color(0xff424543),
                             image: DecorationImage(
-                              image: ExactAssetImage('images/cover_img.png'),
+                              image: ExactAssetImage('images/cover_img2.png'),
                             ),
                             borderRadius: BorderRadius.all(
                               Radius.circular(40),
@@ -372,6 +377,16 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
             setState(() {
               if (firstPlayerTurn) {
                 fPAcquireScore += num;
+                //audio 실행 조건문
+                if(num == 1) {
+                  playAudio(1);
+                } else if( num ==2) {
+                  playAudio(2);
+                }else if (num ==3) {
+                  playAudio(3);
+                }else {
+                  playAudio(-1);
+                }
                 if(fPAcquireScore > int.parse(widget.firstSetNum)) {  //점수가 오버된 경우 setNum을 넘지 않게 하는 조건
                   fPAcquireScore = int.parse(widget.firstSetNum);
                 }
@@ -388,6 +403,16 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
             setState(() {
               if (!firstPlayerTurn) {
                 sPAcquireScore += num;
+                //audio 실행 조건문
+                if(num == 1) {
+                  playAudio(1);
+                } else if( num ==2) {
+                  playAudio(2);
+                }else if (num ==3) {
+                  playAudio(3);
+                }else {
+                  playAudio(-1);
+                }
                 if(sPAcquireScore > int.parse(widget.secondSetNum)) {  //점수가 오버된 경우 setNum을 넘지 않게 하는 조건
                   sPAcquireScore = int.parse(widget.secondSetNum);
                 }
@@ -587,6 +612,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
     setState(() {
       if (firstPlayerTurn) {
         fPAcquireScore++;
+        playAudio(1);
         fPAvgCalculation();
       } else {
         changeTurn();
@@ -598,6 +624,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
     setState(() {
       if (!firstPlayerTurn) {
         sPAcquireScore++;
+        playAudio(1);
         sPAvgCalculation();
       } else {
         changeTurn();
@@ -628,6 +655,23 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
     });
     fPAvgCalculation();
     sPAvgCalculation();
+
+  }
+
+  void playAudio(int score) {
+    _audioPlayer = AudioPlayer();
+    _audioCache = AudioCache(fixedPlayer: _audioPlayer);
+
+    if(score == 1) {
+      _audioCache.play('plus1.mp3');
+    } else if(score == 2) {
+      _audioCache.play('plus2.mp3');
+    } else if(score == 3) {
+      _audioCache.play('plus3.mp3');
+    } else {
+      _audioCache.play('minus1.mp3');
+    }
+
   }
 
   void _setFirstTurn() {
