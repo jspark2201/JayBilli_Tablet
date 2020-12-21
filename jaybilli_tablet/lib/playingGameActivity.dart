@@ -9,10 +9,11 @@ class PlayingGameActivity extends StatefulWidget {
 
   //widget.firstSetNum 또는 widget.secondSetNum  형식을 통해 아래 클래스에서 사용 가능
 
-  PlayingGameActivity({@required this.firstSetNum,
-    @required this.secondSetNum,
-    @required this.firstSetColor,
-    @required this.secondSetColor});
+  PlayingGameActivity(
+      {@required this.firstSetNum,
+      @required this.secondSetNum,
+      @required this.firstSetColor,
+      @required this.secondSetColor});
 
   @override
   _PlayingGameActivityState createState() => _PlayingGameActivityState();
@@ -60,104 +61,102 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
       backgroundColor: Color(0xff424543),
       body: SafeArea(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: firstPlayerForm(),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            '$inning',
-                            style: TextStyle(fontSize: 60, color: Colors.white),
-                          ),
-                          Text(
-                            _hourGameTime+':'+_minuteGameTime,
-                            style: TextStyle(fontSize: 30, color: Colors.red),
-                          ),
-                          Container(
-                            width: 400,
-                            height: 300,
-                            decoration: BoxDecoration(
-                                color: Color(0xff424543),
-                                image: DecorationImage(
-                                  image: ExactAssetImage(
-                                      'images/cover_img.png'),
-                                ),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(40),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Color(0xff2C2E2C),
-                                      offset: Offset(4.0, 4.0),
-                                      blurRadius: 15.0,
-                                      spreadRadius: 1.0),
-                                  BoxShadow(
-                                      color: Colors.grey[800],
-                                      offset: Offset(-4.0, -4.0),
-                                      blurRadius: 15.0,
-                                      spreadRadius: 1.0)
-                                ]),
-                          ),
-                          timeOutTimer(),
-                          timerBar(_timeOutTime),
-                          SizedBox(),
-                          ButtonTheme(
-                            height: 100,
-                            minWidth: 350,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20)),
-                            child: RaisedButton(
-                              color: Color(0xff366796),
-                              onPressed: () {
-                                _startTimeOutTimer();
-                                changeTurn();
-                              },
-                              child: Text(
-                                '턴 넘기기',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 30),
-                              ),
-                            ),
-                          ),
-                          SizedBox(),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: secondPlayerForm(),
-                    )
-                  ],
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: firstPlayerForm(),
                 ),
-              ),
-              ButtonTheme(
-                height: 70,
-                minWidth: 1200,
-                shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                child: RaisedButton(
-                  color: Color(0xffFF6161),
-                  onPressed: () {
-                    finishGame();
-                  },
-                  child: Text(
-                    '종료하기',
-                    style: TextStyle(color: Colors.white, fontSize: 30),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        '$inning',
+                        style: TextStyle(fontSize: 60, color: Colors.white),
+                      ),
+                      Text(
+                        _hourGameTime + ':' + _minuteGameTime,
+                        style: TextStyle(fontSize: 30, color: Colors.red),
+                      ),
+                      Container(
+                        width: 400,
+                        height: 300,
+                        decoration: BoxDecoration(
+                            color: Color(0xff424543),
+                            image: DecorationImage(
+                              image: ExactAssetImage('images/cover_img.png'),
+                            ),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(40),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Color(0xff2C2E2C),
+                                  offset: Offset(4.0, 4.0),
+                                  blurRadius: 15.0,
+                                  spreadRadius: 1.0),
+                              BoxShadow(
+                                  color: Colors.grey[800],
+                                  offset: Offset(-4.0, -4.0),
+                                  blurRadius: 15.0,
+                                  spreadRadius: 1.0)
+                            ]),
+                      ),
+                      timeOutTimer(),
+                      timerBar(_timeOutTime),
+                      SizedBox(),
+                      ButtonTheme(
+                        height: 100,
+                        minWidth: 350,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        child: RaisedButton(
+                          color: Color(0xff366796),
+                          onPressed: () {
+                            _startTimeOutTimer();
+                            changeTurn();
+                          },
+                          child: Text(
+                            '턴 넘기기',
+                            style: TextStyle(color: Colors.white, fontSize: 30),
+                          ),
+                        ),
+                      ),
+                      SizedBox(),
+                    ],
                   ),
                 ),
+                Expanded(
+                  flex: 1,
+                  child: secondPlayerForm(),
+                )
+              ],
+            ),
+          ),
+          ButtonTheme(
+            height: 70,
+            minWidth: 1200,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: RaisedButton(
+              color: Color(0xffFF6161),
+              onPressed: () {
+                terminationGame();
+              },
+              child: Text(
+                '종료하기',
+                style: TextStyle(color: Colors.white, fontSize: 30),
               ),
-            ],
-          )),
+            ),
+          ),
+        ],
+      )),
     );
   }
 
@@ -180,6 +179,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                 onPressed: () {
                   fPTapped();
                   _startTimeOutTimer();
+                  finishGame(1);
                 },
                 child: SizedBox(
                   height: 630,
@@ -191,7 +191,8 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                         style: TextStyle(fontSize: 30),
                       ),
                       SizedBox(),
-                      Text('$fPAcquireScore',
+                      Text(
+                        '$fPAcquireScore',
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 80,
@@ -235,7 +236,8 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                             blurRadius: 3.0)
                       ]),
                   child: CircleAvatar(
-                    child: Text(widget.firstSetNum,
+                    child: Text(
+                      widget.firstSetNum,
                       style: TextStyle(fontSize: 30, color: Colors.black),
                     ),
                     radius: 30,
@@ -276,6 +278,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                 onPressed: () {
                   sPTapped();
                   _startTimeOutTimer();
+                  finishGame(2);
                 },
                 child: SizedBox(
                   height: 630,
@@ -287,7 +290,8 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                         style: TextStyle(fontSize: 30),
                       ),
                       SizedBox(),
-                      Text('$sPAcquireScore',
+                      Text(
+                        '$sPAcquireScore',
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 80,
@@ -331,7 +335,8 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                             blurRadius: 3.0)
                       ]),
                   child: CircleAvatar(
-                    child: Text(widget.secondSetNum,
+                    child: Text(
+                      widget.secondSetNum,
                       style: TextStyle(fontSize: 30, color: Colors.black),
                     ),
                     radius: 30,
@@ -367,7 +372,11 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
             setState(() {
               if (firstPlayerTurn) {
                 fPAcquireScore += num;
+                if(fPAcquireScore > int.parse(widget.firstSetNum)) {  //점수가 오버된 경우 setNum을 넘지 않게 하는 조건
+                  fPAcquireScore = int.parse(widget.firstSetNum);
+                }
                 fPAvgCalculation();
+                finishGame(player);
               } else {
                 changeTurn();
               }
@@ -379,7 +388,11 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
             setState(() {
               if (!firstPlayerTurn) {
                 sPAcquireScore += num;
+                if(sPAcquireScore > int.parse(widget.secondSetNum)) {  //점수가 오버된 경우 setNum을 넘지 않게 하는 조건
+                  sPAcquireScore = int.parse(widget.secondSetNum);
+                }
                 sPAvgCalculation();
+                finishGame(player);
               } else {
                 changeTurn();
               }
@@ -496,7 +509,33 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
             ),
           ),
         ],
-      ),);
+      ),
+    );
+  }
+
+  Widget finishAlertDialog(int player) {
+    return AlertDialog(
+      title: Center(child: Text('승리', style: TextStyle(fontSize: 30, color: Colors.blue, fontWeight: FontWeight.bold),)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(20.0))
+      ),
+      content: Container(
+        height: 400,
+        width: 800,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(),
+            Text('비회원$player', style: TextStyle(fontSize: 50, color: Colors.black, fontWeight: FontWeight.bold),),
+            FlatButton(onPressed: () {
+
+              Navigator.pop(context);
+              terminationGame();
+            }, child: Text('종료', style: TextStyle(color: Colors.red, fontSize: 20),))
+          ],
+        ),
+      ),
+    );
   }
 
   void _startTimeOutTimer() {
@@ -519,13 +558,13 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
 
   void _startGameTimer() {
     int _hour = 0;
-    int _minute= 0;
+    int _minute = 0;
 
     _gameTimer = Timer.periodic(Duration(seconds: 60), (timer) {
       setState(() {
         if (_minute < 59) {
           _minute++;
-          if(_minute < 10) {
+          if (_minute < 10) {
             _minuteGameTime = '0' + _minute.toString();
           } else {
             _minuteGameTime = _minute.toString();
@@ -534,7 +573,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
           _minute = 0;
           _minuteGameTime = '00';
           _hour++;
-          if(_hour < 10) {
+          if (_hour < 10) {
             _hourGameTime = '0' + _hour.toString();
           } else {
             _hourGameTime = _hour.toString();
@@ -599,7 +638,31 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
     }
   }
 
-  void finishGame() {
+  void finishGame(int player) {
+    if (player == 1) {
+      fPAcquireScore >= int.parse(widget.firstSetNum)
+          ? showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (BuildContext context) {
+                return finishAlertDialog(player);
+              })
+          : null;
+    }
+
+    if (player == 2) {
+      sPAcquireScore >= int.parse(widget.secondSetNum)
+          ? showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (BuildContext context) {
+                return finishAlertDialog(player);
+              })
+          : null;
+    }
+  }
+
+  void terminationGame() {
     Navigator.pop(context);
   }
 }
