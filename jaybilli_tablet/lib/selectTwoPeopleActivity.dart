@@ -19,6 +19,7 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _idController = TextEditingController(text: '');
   TextEditingController _pwController = TextEditingController(text: '');
+  TextEditingController _formController = TextEditingController(text: '@naver.com');
 
   @override
   void dispose() {
@@ -61,24 +62,28 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Stack(children: [
+                        //비회원이나 회원으로 세팅한 후 점수 설정 위젯
                         Visibility(
                             visible: !_firstVisible,
                             child: completeSettingBox(
                                 firstPlayerColor, 1, firstPlayerNum)),
+                        //비회원 또는 회원 버튼을 클릭할 수 있는 위젯
                         Visibility(
                             visible: _firstVisible,
                             child: incompleteSettingBox(firstPlayerColor, 1)),
                       ]),
                       Stack(
                         children: [
+                          //비회원이나 회원으로 세팅한 후 점수 설정 위젯
                           Visibility(
                               visible: !_secondVisible,
                               child: completeSettingBox(
                                   secondPlayerColor, 2, secondPlayerNum)),
+                          //비회원 또는 회원 버튼을 클릭할 수 있는 위젯
                           Visibility(
                               visible: _secondVisible,
                               child:
-                                  incompleteSettingBox(secondPlayerColor, 2)),
+                              incompleteSettingBox(secondPlayerColor, 2)),
                         ],
                       ),
                     ],
@@ -379,7 +384,11 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
             barrierDismissible: false,
             context: context,
             builder: (BuildContext context) {
-              return _memberDialog();
+              if(player == 1) {
+                return _memberDialog(1);
+              } else {
+                return _memberDialog(2);
+              }
             },
           );
         },
@@ -392,163 +401,276 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
     );
   }
 
-  Widget _memberDialog() {
-    return AlertDialog(
-      backgroundColor: Color(0xff366796),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20.0)),
-      ),
-      content: StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-          return SizedBox(
-            width: 1100,
-            height: 500,
-            child: Stack(
-              overflow: Overflow.visible,
-              children: [
-                Positioned(
-                    left: 250,
-                    top: -120,
-                    child: Image.asset(
-                      'images/title_img2.png',
-                      width: 600,
-                      height: 200,
-                    )),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _memberDialog(var player) {
+    return StreamBuilder<FirebaseUser>(
+      stream: FirebaseAuth.instance.onAuthStateChanged,
+      builder: (context, snapshot) {
+        return AlertDialog(
+          backgroundColor: Color(0xff366796),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0)),
+          ),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return SizedBox(
+                width: 1100,
+                height: 500,
+                child: Stack(
+                  overflow: Overflow.visible,
                   children: [
-                    SizedBox(),
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '아이디',
-                            style: TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          TextFormField(
-                            controller: _idController,
-                            style: TextStyle(fontSize: 30),
-                            decoration: getTextFieldDecor('아이디'),
-                            validator: (String value) {
-                              if (value.isEmpty) {
-                                return '올바른 형식으로 입력해주세요.';
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(
-                            height: 40,
-                          ),
-                          Text(
-                            '비밀번호',
-                            style: TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          TextFormField(
-                            controller: _pwController,
-                            obscureText: true,
-                            style: TextStyle(fontSize: 30),
-                            decoration: getTextFieldDecor('비밀번호'),
-                            validator: (String value) {
-                              if (value.isEmpty) {
-                                return '비밀번호를 입력해 주세요.';
-                              }
-                              return null;
-                            },
-                          ),
-                        ],
-                      ),
-                    ), // path: lib/widgets/
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Positioned(
+                        left: 250,
+                        top: -120,
+                        child: Image.asset(
+                          'images/title_img2.png',
+                          width: 600,
+                          height: 200,
+                        )),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ButtonTheme(
-                          height: 70,
-                          minWidth: 200,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          child: RaisedButton(
-                            onPressed: () {
-                              //종료했을 때, text field 값을 null로 초기화
-                              _idController.text = '';
-                              _pwController.text = '';
-                              Navigator.pop(context);
-                            },
-                            color: Color(0xffFF6161),
-                            child: Text(
-                              '취소',
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 30),
-                            ),
+                        SizedBox(),
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '아이디',
+                                style: TextStyle(
+                                    fontSize: 30, fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              TextFormField(
+                                controller: _idController,
+                                style: TextStyle(fontSize: 30),
+                                decoration: getTextFieldDecor('아이디'),
+                                validator: (String value) {
+                                  if (value.isEmpty) {
+                                    return '올바른 형식으로 입력해주세요.';
+                                  }
+                                  //_idController.text  = value + '@naver.com';
+                                  return null;
+                                },
+                              ),
+                              SizedBox(
+                                height: 40,
+                              ),
+                              Text(
+                                '비밀번호',
+                                style: TextStyle(
+                                    fontSize: 30, fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              TextFormField(
+                                controller: _pwController,
+                                obscureText: true,
+                                style: TextStyle(fontSize: 30),
+                                decoration: getTextFieldDecor('비밀번호'),
+                                validator: (String value) {
+                                  if (value.isEmpty) {
+                                    return '비밀번호를 입력해 주세요.';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
                           ),
-                        ),
-                        SizedBox(
-                          width: 100,
-                        ),
-                        ButtonTheme(
-                          height: 70,
-                          minWidth: 200,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          child: RaisedButton(
-                            onPressed: () {
-                              //올바른 형식으로 아이디 및 패스워드가 입력된 경우
-                              if (_formKey.currentState.validate()) {
-                                print(_idController.text);
-                                print(_pwController.text);
-                                Navigator.pop(context);
-                              }
-                            },
-                            color: Color(0xffFF6161),
-                            child: Text(
-                              '로그인',
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 30),
+                        ), // path: lib/widgets/
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ButtonTheme(
+                              height: 70,
+                              minWidth: 200,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: RaisedButton(
+                                onPressed: () {
+                                  //종료했을 때, text field 값을 null로 초기화
+                                  _idController.text = '';
+                                  _pwController.text = '';
+                                  Navigator.pop(context);
+                                },
+                                color: Color(0xffFF6161),
+                                child: Text(
+                                  '취소',
+                                  style:
+                                  TextStyle(color: Colors.white, fontSize: 30),
+                                ),
+                              ),
                             ),
-                          ),
+                            SizedBox(
+                              width: 100,
+                            ),
+                            ButtonTheme(
+                              height: 70,
+                              minWidth: 200,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: RaisedButton(
+                                onPressed: () {
+                                  //올바른 형식으로 아이디 및 패스워드가 입력된 경우
+                                  if (_formKey.currentState.validate()) {
+                                    print(_idController.text);
+                                    print(_pwController.text);
+                                    if(player == 1) {
+                                      _fMLogin;
+                                    } else {
+                                      _sMLogin;
+                                    }
+
+                                  }
+                                },
+                                color: Color(0xffFF6161),
+                                child: Text(
+                                  '로그인',
+                                  style:
+                                  TextStyle(color: Colors.white, fontSize: 30),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          );
-        },
-      ),
+              );
+            },
+          ),
+        );
+      }
     );
   }
 
   get _register async {
-    final UserCredential result = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(
-            email: _idController.text, password: _pwController.text);
+    String errorMessage;
+    try {
+      final AuthResult result = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+          email: _idController.text+'@gmail.com', password: _pwController.text);
 
-    final FirebaseUser user = result.user;
-
-    if (user == null) {
-      final snackBar = SnackBar(content: Text('Please try again later!'));
-      Scaffold.of(context).showSnackBar(snackBar);
+      final FirebaseUser user = result.user;
+    } catch(error) {
+      switch (error.code) {
+        case "ERROR_INVALID_EMAIL":
+          errorMessage = "Your email address appears to be malformed.";
+          break;
+        case "ERROR_WRONG_PASSWORD":
+          errorMessage = "Your password is wrong.";
+          break;
+        case "ERROR_USER_NOT_FOUND":
+          errorMessage = "User with this email doesn't exist.";
+          break;
+        case "ERROR_USER_DISABLED":
+          errorMessage = "User with this email has been disabled.";
+          break;
+        case "ERROR_TOO_MANY_REQUESTS":
+          errorMessage = "Too many requests. Try again later.";
+          break;
+        case "ERROR_OPERATION_NOT_ALLOWED":
+          errorMessage = "Signing in with Email and Password is not enabled.";
+          break;
+        default:
+          errorMessage = "An undefined Error happened.";
+      }
+    }
+    if (errorMessage != null) {
+      return Future.error(errorMessage);
     }
   }
 
-  get _login async {
-    final UserCredential result = await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: _idController.text, password: _pwController.text);
+  //첫번째 플레이어 로그인 함수
+  get _fMLogin async {
+    String errorMessage;
+    try {
+      final AuthResult result = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: _idController.text+'@gmail.com', password: _pwController.text);
 
-    final FirebaseUser user = result.user;
+      final FirebaseUser user = result.user;
 
-    if(user == null) {
-      print('등록된 유저가 없습니다.');
+      _idController.text = '';
+      _pwController.text = '';
+      Navigator.pop(context);
+      setState(() {
+        _firstVisible = false;
+      });
+
+    } catch(error) {
+      switch (error.code) {
+        case "ERROR_INVALID_EMAIL":
+          errorMessage = "Your email address appears to be malformed.";
+          break;
+        case "ERROR_WRONG_PASSWORD":
+          errorMessage = "Your password is wrong.";
+          break;
+        case "ERROR_USER_NOT_FOUND":
+          errorMessage = "User with this email doesn't exist.";
+          break;
+        case "ERROR_USER_DISABLED":
+          errorMessage = "User with this email has been disabled.";
+          break;
+        case "ERROR_TOO_MANY_REQUESTS":
+          errorMessage = "Too many requests. Try again later.";
+          break;
+        case "ERROR_OPERATION_NOT_ALLOWED":
+          errorMessage = "Signing in with Email and Password is not enabled.";
+          break;
+        default:
+          errorMessage = "An undefined Error happened.";
+      }
+    }
+    if (errorMessage != null) {
+      return Future.error(errorMessage);
+    }
+  }
+  //두번째 플레이어 로그인 함수
+  get _sMLogin async {
+    String errorMessage;
+    try {
+      final AuthResult result = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: _idController.text+'@gmail.com', password: _pwController.text);
+
+      final FirebaseUser user = result.user;
+
+      _idController.text = '';
+      _pwController.text = '';
+      Navigator.pop(context);
+      setState(() {
+        _secondVisible = false;
+      });
+
+    } catch(error) {
+      switch (error.code) {
+        case "ERROR_INVALID_EMAIL":
+          errorMessage = "Your email address appears to be malformed.";
+          break;
+        case "ERROR_WRONG_PASSWORD":
+          errorMessage = "Your password is wrong.";
+          break;
+        case "ERROR_USER_NOT_FOUND":
+          errorMessage = "User with this email doesn't exist.";
+          break;
+        case "ERROR_USER_DISABLED":
+          errorMessage = "User with this email has been disabled.";
+          break;
+        case "ERROR_TOO_MANY_REQUESTS":
+          errorMessage = "Too many requests. Try again later.";
+          break;
+        case "ERROR_OPERATION_NOT_ALLOWED":
+          errorMessage = "Signing in with Email and Password is not enabled.";
+          break;
+        default:
+          errorMessage = "An undefined Error happened.";
+      }
+    }
+    if (errorMessage != null) {
+      return Future.error(errorMessage);
     }
   }
 
