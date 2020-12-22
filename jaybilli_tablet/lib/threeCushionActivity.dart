@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jaybilli_tablet/selectFourPeopleActivity.dart';
 import 'package:jaybilli_tablet/selectOnePersonActivity.dart';
 import 'package:jaybilli_tablet/selectThreePeopleActivity.dart';
@@ -35,10 +36,11 @@ class ThreeCushionActivity extends StatelessWidget {
                     child: RaisedButton(
                       color: Color(0xff366796),
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SelectOnePersonActivity()));
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => SelectOnePersonActivity()));
+                        Fluttertoast.showToast(msg: '준비 중');
                       },
                       child: Text(
                         '1인',
@@ -84,10 +86,11 @@ class ThreeCushionActivity extends StatelessWidget {
                     child: RaisedButton(
                       color: Color(0xff366796),
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SelectThreePeopleActivity()));
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => SelectThreePeopleActivity()));
+                        Fluttertoast.showToast(msg: '준비 중');
                       },
                       child: Text(
                         '3인',
@@ -106,10 +109,11 @@ class ThreeCushionActivity extends StatelessWidget {
                     child: RaisedButton(
                       color: Color(0xff366796),
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SelectFourPeopleActivity()));
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => SelectFourPeopleActivity()));
+                        Fluttertoast.showToast(msg: '준비 중');
                       },
                       child: Text(
                         '4인',

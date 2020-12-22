@@ -15,10 +15,21 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
   var settingNum = '0';
   var _firstVisible = true;
   var _secondVisible = true;
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController _idController = TextEditingController(text: '');
+  TextEditingController _pwController = TextEditingController(text: '');
+
+  @override
+  void dispose() {
+    _idController.dispose();
+    _pwController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,  //키보드가 올라와도 무시하는 옵션
       backgroundColor: Color(0xff424543),
       body: SafeArea(
         child: Column(
@@ -155,7 +166,6 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
                   icon: Icon(Icons.settings),
                   iconSize: 40,
                   onPressed: () {
-                    print('설정 버튼 눌림');
                     reSettingBtn(context, player, color);
                   })
             ],
@@ -196,6 +206,9 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
               builder: (BuildContext context) {
                 return AlertDialog(
                     backgroundColor: Color(playerColor),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                    ),
                     content: StatefulBuilder(
                         builder: (BuildContext context, StateSetter setState) {
                       return SizedBox(
@@ -360,13 +373,155 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
       minWidth: 300,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: RaisedButton(
-        onPressed: () {},
+        onPressed: () {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context) {
+              return _memberDialog();
+            },
+          );
+        },
         color: Color(0xff366796),
         child: Text(
           '회원',
           style: TextStyle(color: Colors.white, fontSize: 30),
         ),
       ),
+    );
+  }
+
+  Widget _memberDialog() {
+    return AlertDialog(
+      backgroundColor: Color(0xff366796),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(20.0)),
+      ),
+      content: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+        return SizedBox(
+          width: 1100,
+          height: 500,
+          child: Stack(
+            overflow: Overflow.visible,
+            children: [
+              Positioned(
+                  left: 250,
+                  top: -120,
+                  child: Image.asset('images/title_img2.png', width: 600, height: 200,)),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('아이디', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
+                        SizedBox(height: 10,),
+                        TextFormField(
+                          controller: _idController,
+                          style: TextStyle(fontSize: 30),
+                          decoration: getTextFieldDecor('아이디'),
+                          validator: (String value) {
+                            if(value.isEmpty) {
+                              return '올바른 형식으로 입력해주세요.';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 40,),
+                        Text('비밀번호', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
+                        SizedBox(height: 10,),
+                        TextFormField(
+                          controller: _pwController,
+                          obscureText: true,
+                          style: TextStyle(fontSize: 30),
+                          decoration: getTextFieldDecor('비밀번호'),
+                          validator: (String value) {
+                            if(value.isEmpty) {
+                              return '비밀번호를 입력해 주세요.';
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
+                    ),
+                  ),// path: lib/widgets/
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ButtonTheme(
+                        height: 70,
+                        minWidth: 200,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        child: RaisedButton(
+                          onPressed: () {
+                            //종료했을 때, text field 값을 null로 초기화
+                            _idController.text = '';
+                            _pwController.text = '';
+                            Navigator.pop(context);
+                          },
+                          color: Color(0xffFF6161),
+                          child: Text(
+                            '취소',
+                            style: TextStyle(color: Colors.white, fontSize: 30),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 100,),
+                      ButtonTheme(
+                        height: 70,
+                        minWidth: 200,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        child: RaisedButton(
+                          onPressed: () {
+                            //올바른 형식으로 아이디 및 패스워드가 입력된 경우
+                            if(_formKey.currentState.validate()) {
+                              print(_idController.text);
+                              print(_pwController.text);
+                            }
+                          },
+                          color: Color(0xffFF6161),
+                          child: Text(
+                            '로그인',
+                            style: TextStyle(color: Colors.white, fontSize: 30),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },),
+    );
+  }
+
+  InputDecoration getTextFieldDecor(String hint) {
+    return InputDecoration(
+        hintText: hint,
+        errorStyle: TextStyle(
+          fontSize: 20, color: Colors.red
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.grey[300],
+            width: 1,
+          ),
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Colors.grey[300],
+            width: 1,
+          ),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        fillColor: Colors.grey[100],
+        filled: true
     );
   }
 
@@ -425,9 +580,14 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
   }
 
   void startGame() {
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) => PlayingGameActivity(firstSetNum: firstPlayerNum, secondSetNum: secondPlayerNum,
-        firstSetColor: firstPlayerColor.toInt(),secondSetColor: secondPlayerColor.toInt())));
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => PlayingGameActivity(
+                firstSetNum: firstPlayerNum,
+                secondSetNum: secondPlayerNum,
+                firstSetColor: firstPlayerColor.toInt(),
+                secondSetColor: secondPlayerColor.toInt())));
   }
 
   //공 색을 변경하는 함수
@@ -437,8 +597,6 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
       temp = firstPlayerColor;
       firstPlayerColor = secondPlayerColor;
       secondPlayerColor = temp;
-
-
     });
   }
 
@@ -627,11 +785,15 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
         builder: (BuildContext context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0)),
+                borderRadius: BorderRadius.circular(10.0)),
             content: SizedBox(
                 height: 200,
                 width: 400,
-                child: Center(child: Text('점수를 입력해주세요', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),))),
+                child: Center(
+                    child: Text(
+                  '점수를 입력해주세요',
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                ))),
           );
         });
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jaybilli_tablet/fourBallsActivity.dart';
 import 'package:jaybilli_tablet/poolActivity.dart';
 import 'package:jaybilli_tablet/threeCushionActivity.dart';
@@ -40,10 +41,11 @@ class EventSettingActivity extends StatelessWidget {
                 child: RaisedButton(
                   color: Color(0xffFF6161),
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => FourBallsActivity()));
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => FourBallsActivity()));
+                    Fluttertoast.showToast(msg: '준비 중');
                   },
                   child: Text(
                     '4구',
@@ -59,10 +61,11 @@ class EventSettingActivity extends StatelessWidget {
                 child: RaisedButton(
                   color: Color(0xffF6D161),
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PoolActivity()));
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => PoolActivity()));
+                    Fluttertoast.showToast(msg: '준비 중');
                   },
                   child: Text(
                     '포켓볼',
