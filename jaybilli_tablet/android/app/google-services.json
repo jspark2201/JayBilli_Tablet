@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "480911070695",
+    "project_id": "jay-billi",
+    "storage_bucket": "jay-billi.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:480911070695:android:f0bb7fd48a59433558d942",
+        "android_client_info": {
+          "package_name": "com.jaybilli.jaybilli_tablet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "480911070695-kerrvqsumn6ppgv7h40h0ma9n01ldbsm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0ut56au7DkyU_RTFCW60EJ0aYRbJkyRo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "480911070695-kerrvqsumn6ppgv7h40h0ma9n01ldbsm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "480911070695-nscl5a7eo27gplmnq1s8md5jqls14ksg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.jaybilli.jaybilliTablet"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
