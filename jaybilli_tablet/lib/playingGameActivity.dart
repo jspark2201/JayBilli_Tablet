@@ -188,7 +188,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                 onPressed: () {
                   fPTapped();
                   _startTimeOutTimer();
-                  finishGame(1);
+                  finishGame(1, widget.firstPlayerName);
                 },
                 child: SizedBox(
                   height: 630,
@@ -287,7 +287,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                 onPressed: () {
                   sPTapped();
                   _startTimeOutTimer();
-                  finishGame(2);
+                  finishGame(2, widget.secondPlayerName);
                 },
                 child: SizedBox(
                   height: 630,
@@ -395,7 +395,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                   fPAcquireScore = int.parse(widget.firstSetNum);
                 }
                 fPAvgCalculation();
-                finishGame(player);
+                finishGame(1, widget.firstPlayerName);
               } else {
                 changeTurn();
               }
@@ -421,7 +421,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                   sPAcquireScore = int.parse(widget.secondSetNum);
                 }
                 sPAvgCalculation();
-                finishGame(player);
+                finishGame(2, widget.secondPlayerName);
               } else {
                 changeTurn();
               }
@@ -542,7 +542,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
     );
   }
 
-  Widget finishAlertDialog(int player) {
+  Widget finishAlertDialog(String name) {
     return AlertDialog(
       title: Center(child: Text('승리', style: TextStyle(fontSize: 30, color: Colors.blue, fontWeight: FontWeight.bold),)),
       shape: RoundedRectangleBorder(
@@ -555,7 +555,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(),
-            Text('비회원$player', style: TextStyle(fontSize: 50, color: Colors.black, fontWeight: FontWeight.bold),),
+            Text(name, style: TextStyle(fontSize: 50, color: Colors.black, fontWeight: FontWeight.bold),),
             FlatButton(onPressed: () {
 
               Navigator.pop(context);
@@ -686,14 +686,14 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
     }
   }
 
-  void finishGame(int player) {
+  void finishGame(var player, String name) {
     if (player == 1) {
       fPAcquireScore >= int.parse(widget.firstSetNum)
           ? showDialog(
               barrierDismissible: false,
               context: context,
               builder: (BuildContext context) {
-                return finishAlertDialog(player);
+                return finishAlertDialog(name);
               })
           : null;
     }
@@ -704,7 +704,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
               barrierDismissible: false,
               context: context,
               builder: (BuildContext context) {
-                return finishAlertDialog(player);
+                return finishAlertDialog(name);
               })
           : null;
     }

@@ -471,10 +471,9 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
                                   style: TextStyle(fontSize: 30),
                                   decoration: getTextFieldDecor('아이디'),
                                   validator: (String value) {
-                                    if (value.isEmpty) {
+                                    if (value.isEmpty || value.contains(' ')) {
                                       return '올바른 형식으로 입력해주세요.';
                                     }
-                                    //_idController.text  = value + '@naver.com';
                                     return null;
                                   },
                                 ),
@@ -496,7 +495,7 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
                                   style: TextStyle(fontSize: 30),
                                   decoration: getTextFieldDecor('비밀번호'),
                                   validator: (String value) {
-                                    if (value.isEmpty) {
+                                    if (value.isEmpty || value.contains(' ')) {
                                       return '비밀번호를 입력해 주세요.';
                                     }
                                     return null;
@@ -540,8 +539,6 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
                                   onPressed: () {
                                     //올바른 형식으로 아이디 및 패스워드가 입력된 경우
                                     if (_formKey.currentState.validate()) {
-                                      print(_idController.text);
-                                      print(_pwController.text);
                                       if (player == 1) {
                                         _fMLogin;
                                       } else {
