@@ -19,7 +19,8 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController _idController = TextEditingController(text: '');
   TextEditingController _pwController = TextEditingController(text: '');
-  TextEditingController _formController = TextEditingController(text: '@naver.com');
+  String firstMemberId;
+  String secondMemberId;
 
   @override
   void dispose() {
@@ -65,8 +66,8 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
                         //비회원이나 회원으로 세팅한 후 점수 설정 위젯
                         Visibility(
                             visible: !_firstVisible,
-                            child: completeSettingBox(
-                                firstPlayerColor, 1, firstPlayerNum)),
+                            child: completeSettingBox(firstPlayerColor, 1,
+                                firstPlayerNum, firstMemberId)),
                         //비회원 또는 회원 버튼을 클릭할 수 있는 위젯
                         Visibility(
                             visible: _firstVisible,
@@ -77,13 +78,13 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
                           //비회원이나 회원으로 세팅한 후 점수 설정 위젯
                           Visibility(
                               visible: !_secondVisible,
-                              child: completeSettingBox(
-                                  secondPlayerColor, 2, secondPlayerNum)),
+                              child: completeSettingBox(secondPlayerColor, 2,
+                                  secondPlayerNum, secondMemberId)),
                           //비회원 또는 회원 버튼을 클릭할 수 있는 위젯
                           Visibility(
                               visible: _secondVisible,
                               child:
-                              incompleteSettingBox(secondPlayerColor, 2)),
+                                  incompleteSettingBox(secondPlayerColor, 2)),
                         ],
                       ),
                     ],
@@ -145,7 +146,8 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
     );
   }
 
-  Widget completeSettingBox(var color, var player, var number) {
+  Widget completeSettingBox(
+      var color, var player, var number, String memberId) {
     return Container(
       height: 600,
       width: 500,
@@ -180,7 +182,7 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('비회원$player',
+                Text(_setName(player, memberId),
                     style:
                         TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
                 Text(
@@ -197,6 +199,26 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
         ],
       ),
     );
+  }
+
+  String _setName(var player, String memberId) {
+    String name;
+    setState(() {
+      if(memberId == null) {    //비회원일 때
+        if(player == 1) {
+          name = '비회원1';
+        } else {
+          name = '비회원2';
+        }
+      } else {    //회원일 때
+        if(player == 1) {
+          name = firstMemberId;
+        } else {
+          name = secondMemberId;
+        }
+      }
+    });
+    return name;
   }
 
   Widget nonMemberBtn(BuildContext context, var player, var playerColor) {
@@ -384,7 +406,7 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
             barrierDismissible: false,
             context: context,
             builder: (BuildContext context) {
-              if(player == 1) {
+              if (player == 1) {
                 return _memberDialog(1);
               } else {
                 return _memberDialog(2);
@@ -403,160 +425,162 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
 
   Widget _memberDialog(var player) {
     return StreamBuilder<FirebaseUser>(
-      stream: FirebaseAuth.instance.onAuthStateChanged,
-      builder: (context, snapshot) {
-        return AlertDialog(
-          backgroundColor: Color(0xff366796),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20.0)),
-          ),
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return SizedBox(
-                width: 1100,
-                height: 500,
-                child: Stack(
-                  overflow: Overflow.visible,
-                  children: [
-                    Positioned(
-                        left: 250,
-                        top: -120,
-                        child: Image.asset(
-                          'images/title_img2.png',
-                          width: 600,
-                          height: 200,
-                        )),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(),
-                        Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+        stream: FirebaseAuth.instance.onAuthStateChanged,
+        builder: (context, snapshot) {
+          return AlertDialog(
+            backgroundColor: Color(0xff366796),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+            ),
+            content: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return SizedBox(
+                  width: 1100,
+                  height: 500,
+                  child: Stack(
+                    overflow: Overflow.visible,
+                    children: [
+                      Positioned(
+                          left: 250,
+                          top: -120,
+                          child: Image.asset(
+                            'images/title_img2.png',
+                            width: 600,
+                            height: 200,
+                          )),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(),
+                          Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '아이디',
+                                  style: TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                TextFormField(
+                                  controller: _idController,
+                                  style: TextStyle(fontSize: 30),
+                                  decoration: getTextFieldDecor('아이디'),
+                                  validator: (String value) {
+                                    if (value.isEmpty) {
+                                      return '올바른 형식으로 입력해주세요.';
+                                    }
+                                    //_idController.text  = value + '@naver.com';
+                                    return null;
+                                  },
+                                ),
+                                SizedBox(
+                                  height: 40,
+                                ),
+                                Text(
+                                  '비밀번호',
+                                  style: TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                TextFormField(
+                                  controller: _pwController,
+                                  obscureText: true,
+                                  style: TextStyle(fontSize: 30),
+                                  decoration: getTextFieldDecor('비밀번호'),
+                                  validator: (String value) {
+                                    if (value.isEmpty) {
+                                      return '비밀번호를 입력해 주세요.';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ],
+                            ),
+                          ), // path: lib/widgets/
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                '아이디',
-                                style: TextStyle(
-                                    fontSize: 30, fontWeight: FontWeight.bold),
+                              ButtonTheme(
+                                height: 70,
+                                minWidth: 200,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                                child: RaisedButton(
+                                  onPressed: () {
+                                    //종료했을 때, text field 값을 null로 초기화
+                                    _idController.text = '';
+                                    _pwController.text = '';
+                                    Navigator.pop(context);
+                                  },
+                                  color: Color(0xffFF6161),
+                                  child: Text(
+                                    '취소',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 30),
+                                  ),
+                                ),
                               ),
                               SizedBox(
-                                height: 10,
+                                width: 100,
                               ),
-                              TextFormField(
-                                controller: _idController,
-                                style: TextStyle(fontSize: 30),
-                                decoration: getTextFieldDecor('아이디'),
-                                validator: (String value) {
-                                  if (value.isEmpty) {
-                                    return '올바른 형식으로 입력해주세요.';
-                                  }
-                                  //_idController.text  = value + '@naver.com';
-                                  return null;
-                                },
-                              ),
-                              SizedBox(
-                                height: 40,
-                              ),
-                              Text(
-                                '비밀번호',
-                                style: TextStyle(
-                                    fontSize: 30, fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              TextFormField(
-                                controller: _pwController,
-                                obscureText: true,
-                                style: TextStyle(fontSize: 30),
-                                decoration: getTextFieldDecor('비밀번호'),
-                                validator: (String value) {
-                                  if (value.isEmpty) {
-                                    return '비밀번호를 입력해 주세요.';
-                                  }
-                                  return null;
-                                },
+                              ButtonTheme(
+                                height: 70,
+                                minWidth: 200,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                                child: RaisedButton(
+                                  onPressed: () {
+                                    //올바른 형식으로 아이디 및 패스워드가 입력된 경우
+                                    if (_formKey.currentState.validate()) {
+                                      print(_idController.text);
+                                      print(_pwController.text);
+                                      if (player == 1) {
+                                        _fMLogin;
+                                      } else {
+                                        _sMLogin;
+                                      }
+                                    }
+                                  },
+                                  color: Color(0xffFF6161),
+                                  child: Text(
+                                    '로그인',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 30),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
-                        ), // path: lib/widgets/
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ButtonTheme(
-                              height: 70,
-                              minWidth: 200,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20)),
-                              child: RaisedButton(
-                                onPressed: () {
-                                  //종료했을 때, text field 값을 null로 초기화
-                                  _idController.text = '';
-                                  _pwController.text = '';
-                                  Navigator.pop(context);
-                                },
-                                color: Color(0xffFF6161),
-                                child: Text(
-                                  '취소',
-                                  style:
-                                  TextStyle(color: Colors.white, fontSize: 30),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 100,
-                            ),
-                            ButtonTheme(
-                              height: 70,
-                              minWidth: 200,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20)),
-                              child: RaisedButton(
-                                onPressed: () {
-                                  //올바른 형식으로 아이디 및 패스워드가 입력된 경우
-                                  if (_formKey.currentState.validate()) {
-                                    print(_idController.text);
-                                    print(_pwController.text);
-                                    if(player == 1) {
-                                      _fMLogin;
-                                    } else {
-                                      _sMLogin;
-                                    }
-
-                                  }
-                                },
-                                color: Color(0xffFF6161),
-                                child: Text(
-                                  '로그인',
-                                  style:
-                                  TextStyle(color: Colors.white, fontSize: 30),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        );
-      }
-    );
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          );
+        });
   }
 
+  //회원가입 함수
   get _register async {
     String errorMessage;
     try {
       final AuthResult result = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
-          email: _idController.text+'@gmail.com', password: _pwController.text);
+              email: _idController.text + '@gmail.com',
+              password: _pwController.text);
 
       final FirebaseUser user = result.user;
-    } catch(error) {
+    } catch (error) {
       switch (error.code) {
         case "ERROR_INVALID_EMAIL":
           errorMessage = "Your email address appears to be malformed.";
@@ -590,18 +614,22 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
     String errorMessage;
     try {
       final AuthResult result = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: _idController.text+'@gmail.com', password: _pwController.text);
+          .signInWithEmailAndPassword(
+              email: _idController.text + '@gmail.com',
+              password: _pwController.text);
 
       final FirebaseUser user = result.user;
 
+      setState(() {
+        firstMemberId = _idController.text;
+        _firstVisible = false;
+      });
       _idController.text = '';
       _pwController.text = '';
       Navigator.pop(context);
-      setState(() {
-        _firstVisible = false;
-      });
+      reSettingBtn(context, 1, firstPlayerColor);
 
-    } catch(error) {
+    } catch (error) {
       switch (error.code) {
         case "ERROR_INVALID_EMAIL":
           errorMessage = "Your email address appears to be malformed.";
@@ -629,23 +657,29 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
       return Future.error(errorMessage);
     }
   }
+
   //두번째 플레이어 로그인 함수
   get _sMLogin async {
     String errorMessage;
     try {
       final AuthResult result = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: _idController.text+'@gmail.com', password: _pwController.text);
+          .signInWithEmailAndPassword(
+              email: _idController.text + '@gmail.com',
+              password: _pwController.text);
 
       final FirebaseUser user = result.user;
+
+      setState(() {
+        secondMemberId = _idController.text;
+        _secondVisible = false;
+      });
 
       _idController.text = '';
       _pwController.text = '';
       Navigator.pop(context);
-      setState(() {
-        _secondVisible = false;
-      });
+      reSettingBtn(context, 2, secondPlayerColor);
 
-    } catch(error) {
+    } catch (error) {
       switch (error.code) {
         case "ERROR_INVALID_EMAIL":
           errorMessage = "Your email address appears to be malformed.";
@@ -758,7 +792,9 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
                 firstSetNum: firstPlayerNum,
                 secondSetNum: secondPlayerNum,
                 firstSetColor: firstPlayerColor.toInt(),
-                secondSetColor: secondPlayerColor.toInt())));
+                secondSetColor: secondPlayerColor.toInt(),
+                firstPlayerName: firstMemberId==null?'비회원1':firstMemberId,
+                secondPlayerName: secondMemberId==null?'비회원2':secondMemberId,)));
   }
 
   //공 색을 변경하는 함수
@@ -769,7 +805,10 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
       firstPlayerColor = secondPlayerColor;
       secondPlayerColor = temp;
     });
+    print(firstMemberId);
+    print(secondMemberId);
   }
+
 
   //번호를 누르면 점수를 설정하는 함수
   void pressNumberBtn(var key, StateSetter setState) {

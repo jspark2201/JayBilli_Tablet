@@ -8,6 +8,8 @@ class PlayingGameActivity extends StatefulWidget {
   final String secondSetNum;
   final int firstSetColor;
   final int secondSetColor;
+  final String firstPlayerName;
+  final String secondPlayerName;
 
   //widget.firstSetNum 또는 widget.secondSetNum  형식을 통해 아래 클래스에서 사용 가능
 
@@ -15,7 +17,9 @@ class PlayingGameActivity extends StatefulWidget {
       {@required this.firstSetNum,
       @required this.secondSetNum,
       @required this.firstSetColor,
-      @required this.secondSetColor});
+      @required this.secondSetColor,
+      @required this.firstPlayerName,
+      @required this.secondPlayerName});
 
   @override
   _PlayingGameActivityState createState() => _PlayingGameActivityState();
@@ -42,7 +46,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
 
   @override
   void initState() {
-    // TODO: implement initState
+
     super.initState();
 
     _startTimeOutTimer();
@@ -52,7 +56,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
+
     super.dispose();
 
     _timeOutTimer.cancel();
@@ -192,7 +196,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        '비회원1',
+                        widget.firstPlayerName,
                         style: TextStyle(fontSize: 30),
                       ),
                       SizedBox(),
@@ -291,7 +295,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        '비회원2',
+                        widget.secondPlayerName,
                         style: TextStyle(fontSize: 30),
                       ),
                       SizedBox(),
