@@ -21,6 +21,7 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
   TextEditingController _pwController = TextEditingController(text: '');
   String firstMemberId;
   String secondMemberId;
+  String _mailForm = '@gmail.com';
 
   @override
   void dispose() {
@@ -573,7 +574,7 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
     try {
       final AuthResult result = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
-              email: _idController.text + '@gmail.com',
+              email: _idController.text + _mailForm,
               password: _pwController.text);
 
       final FirebaseUser user = result.user;
@@ -612,7 +613,7 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
     try {
       final AuthResult result = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
-              email: _idController.text + '@gmail.com',
+              email: _idController.text + _mailForm,
               password: _pwController.text);
 
       final FirebaseUser user = result.user;
@@ -661,7 +662,7 @@ class _SelectTwoPeopleActivityState extends State<SelectTwoPeopleActivity> {
     try {
       final AuthResult result = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
-              email: _idController.text + '@gmail.com',
+              email: _idController.text + _mailForm,
               password: _pwController.text);
 
       final FirebaseUser user = result.user;

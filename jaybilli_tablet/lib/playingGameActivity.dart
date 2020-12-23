@@ -380,7 +380,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
           if (player == 1) {
             setState(() {
               if (firstPlayerTurn) {
-                fPAcquireScore += num;
+                fPAcquireScore < 0? 0 : fPAcquireScore += num;
                 //audio 실행 조건문
                 if(num == 1) {
                   playAudio(1);
@@ -389,7 +389,9 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                 }else if (num ==3) {
                   playAudio(3);
                 }else {
-                  playAudio(-1);
+                  if(fPAcquireScore != -1) {
+                    playAudio(-1);
+                  }
                 }
                 if(fPAcquireScore > int.parse(widget.firstSetNum)) {  //점수가 오버된 경우 setNum을 넘지 않게 하는 조건
                   fPAcquireScore = int.parse(widget.firstSetNum);
@@ -406,7 +408,7 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
           } else {
             setState(() {
               if (!firstPlayerTurn) {
-                sPAcquireScore += num;
+                sPAcquireScore < 0? 0 : sPAcquireScore += num;
                 //audio 실행 조건문
                 if(num == 1) {
                   playAudio(1);
@@ -415,7 +417,9 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
                 }else if (num ==3) {
                   playAudio(3);
                 }else {
-                  playAudio(-1);
+                  if(sPAcquireScore != -1) {
+                    playAudio(-1);
+                  }
                 }
                 if(sPAcquireScore > int.parse(widget.secondSetNum)) {  //점수가 오버된 경우 setNum을 넘지 않게 하는 조건
                   sPAcquireScore = int.parse(widget.secondSetNum);
@@ -638,13 +642,18 @@ class _PlayingGameActivityState extends State<PlayingGameActivity> {
 
   void fPAvgCalculation() {
     setState(() {
-      fPAverage = (fPAcquireScore / inning).toStringAsFixed(3);
+      if(fPAcquireScore != -1) {  //0.000 이하로 내려가지 않게 하는 조건
+        fPAverage = (fPAcquireScore / inning).toStringAsFixed(3);
+      }
+
     });
   }
 
   void sPAvgCalculation() {
     setState(() {
-      sPAverage = (sPAcquireScore / inning).toStringAsFixed(3);
+      if(sPAcquireScore != -1) {  //0.000 이하로 내려가지 않게 하는 조건
+        sPAverage = (sPAcquireScore / inning).toStringAsFixed(3);
+      }
     });
   }
 
